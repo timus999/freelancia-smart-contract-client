@@ -28,5 +28,29 @@ The app allows users to simulate freelance work escrow flows by connecting their
 
 ---
 
-## 📦 Project Structure
 
+
+## ⚙️ Setup Instructions
+
+1. **Clone the Repository**
+
+```bash
+git clone https://github.com/yourusername/freelancia-client.git
+cd freelancia-client
+```
+
+2. **Install Dependencies**
+```bash
+yarn install
+# or
+npm install
+```
+
+3. **Import Anchor IDL**
+
+4. **Start the Development Server**
+```bash
+yarn dev
+# or
+npm run dev
+```
