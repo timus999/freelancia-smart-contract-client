@@ -35,7 +35,7 @@ The app allows users to simulate freelance work escrow flows by connecting their
 1. **Clone the Repository**
 
 ```bash
-git clone https://github.com/yourusername/freelancia-client.git
+git clone https://github.com/timus999/freelancia-client.git
 cd freelancia-client
 ```
 
