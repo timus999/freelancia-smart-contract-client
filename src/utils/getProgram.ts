@@ -18,6 +18,7 @@ import { web3, Program } from "@coral-xyz/anchor";
     if (!idl || !idl.address) {
     throw new Error("IDL or program address not found");
     }
+
     // Create and return the program instance
  
     return Promise.resolve(new Program<Escrow>(idl as Escrow, { connection, wallet }));

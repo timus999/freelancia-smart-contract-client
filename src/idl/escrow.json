@@ -94,6 +94,79 @@
       "args": []
     },
     {
+      "name": "arbiter_resolve",
+      "discriminator": [
+        72,
+        74,
+        145,
+        98,
+        97,
+        32,
+        107,
+        5
+      ],
+      "accounts": [
+        {
+          "name": "arbiter",
+          "signer": true
+        },
+        {
+          "name": "maker",
+          "writable": true
+        },
+        {
+          "name": "taker",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow.maker",
+                "account": "Escrow"
+              },
+              {
+                "kind": "account",
+                "path": "escrow.escrow_id",
+                "account": "Escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "taker_amount",
+          "type": "u64"
+        },
+        {
+          "name": "maker_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "create_escrow",
       "discriminator": [
         253,
@@ -207,6 +280,65 @@
       ]
     },
     {
+      "name": "raise_dispute",
+      "discriminator": [
+        41,
+        243,
+        1,
+        51,
+        150,
+        95,
+        246,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "signer": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "evidence_uri_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "request_revision",
+      "discriminator": [
+        205,
+        195,
+        75,
+        171,
+        242,
+        149,
+        90,
+        14
+      ],
+      "accounts": [
+        {
+          "name": "maker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "submit_work",
       "discriminator": [
         158,
@@ -285,26 +417,31 @@
     },
     {
       "code": 6005,
+      "name": "AlreadyDisputed",
+      "msg": "This escrow is already disputed"
+    },
+    {
+      "code": 6006,
       "name": "DeadlinePassed",
       "msg": "Deadline has already passed"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "FundsAlreadyReleased",
       "msg": "Funds have already been released"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "InvalidDeadline",
       "msg": "Invalid deadline specified"
     },
     {
-      "code": 6008,
+      "code": 6009,
       "name": "InvalidReleaseTime",
       "msg": "Invalid auto-release time specified"
     },
     {
-      "code": 6009,
+      "code": 6010,
       "name": "Overflow",
       "msg": "Arithmetic overflow"
     }
@@ -349,6 +486,10 @@
           },
           {
             "name": "completed_at",
+            "type": "i64"
+          },
+          {
+            "name": "disputed_at",
             "type": "i64"
           },
           {

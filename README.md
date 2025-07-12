@@ -8,13 +8,36 @@ The app allows users to simulate freelance work escrow flows by connecting their
 
 ## 🚀 Features
 
-- 🔐 **Phantom Wallet Integration** – Users can connect their Solana wallet to the app.
-- 🪙 **Wallet Balance Display** – Shows the connected wallet’s balance in SOL.
-- 🧾 **Escrow Creation** – Button interface to create new escrow contracts.
-- 📋 **Escrow Viewer** – Displays all escrows associated with the user (either as maker or taker).
-- 📤 **Submit Work** – Taker can submit the work/deliverable hash for review.
-- ✅ **Approve Work** – Maker can approve submitted work and release funds to the taker.
-- 💡 Built with **Anchor framework** and simulates real smart contract logic on the devnet/testnet.
+- 🔐 **Phantom Wallet Integration**  
+  Users can connect their Solana wallet securely to the application.
+
+- 🪙 **Wallet Balance Display**  
+  Real-time display of the connected wallet’s balance in SOL.
+
+- 🧾 **Escrow Creation**  
+  Users can create new escrow contracts that lock funds into a program-controlled vault. Each escrow includes a deadline, auto-release time, and optional arbiter.
+
+- 📋 **Escrow Viewer**  
+  Dynamically lists all escrows associated with the connected wallet, including their current status and actionable options.
+
+- 📤 **Submit Work**  
+  The taker (freelancer) can submit deliverables by providing a hashed representation of their work.
+
+- ✅ **Approve Work**  
+  The maker (client) can review the submitted deliverable and approve the escrow. Funds are transferred to the taker upon approval.
+
+- 🔁 **Request Revision**  
+  If the maker is not satisfied with the submission, they can request a revision. This sets the escrow status back to **Active**, allowing the taker to revise and resubmit.
+
+- 🚩 **Raise Dispute**  
+  Either party can raise a dispute if expectations are not met. This locks the escrow into a **Disputed** state and stores a hash pointing to off-chain evidence.
+
+- ⚖️ **Dispute Resolver (Arbiter Resolution)**  
+  A trusted arbiter (set at escrow creation) can resolve disputes by splitting the locked funds between the maker and taker in any proportion. A secure UI allows input of split amounts with optional auto-fill presets (e.g., 50/50) and confirmation modal.
+
+- 🧪 **Testnet Simulation**  
+  The app uses the Anchor framework and can be tested on Solana Devnet/Testnet for realistic simulations of smart contract behavior.
+
 
 ---
 
