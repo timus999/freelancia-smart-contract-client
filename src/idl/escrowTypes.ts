@@ -100,6 +100,79 @@ export type Escrow = {
       "args": []
     },
     {
+      "name": "arbiterResolve",
+      "discriminator": [
+        72,
+        74,
+        145,
+        98,
+        97,
+        32,
+        107,
+        5
+      ],
+      "accounts": [
+        {
+          "name": "arbiter",
+          "signer": true
+        },
+        {
+          "name": "maker",
+          "writable": true
+        },
+        {
+          "name": "taker",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow.maker",
+                "account": "escrow"
+              },
+              {
+                "kind": "account",
+                "path": "escrow.escrow_id",
+                "account": "escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "takerAmount",
+          "type": "u64"
+        },
+        {
+          "name": "makerAmount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "createEscrow",
       "discriminator": [
         253,
@@ -213,6 +286,65 @@ export type Escrow = {
       ]
     },
     {
+      "name": "raiseDispute",
+      "discriminator": [
+        41,
+        243,
+        1,
+        51,
+        150,
+        95,
+        246,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "signer": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "evidenceUriHash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "requestRevision",
+      "discriminator": [
+        205,
+        195,
+        75,
+        171,
+        242,
+        149,
+        90,
+        14
+      ],
+      "accounts": [
+        {
+          "name": "maker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "submitWork",
       "discriminator": [
         158,
@@ -291,26 +423,31 @@ export type Escrow = {
     },
     {
       "code": 6005,
+      "name": "alreadyDisputed",
+      "msg": "This escrow is already disputed"
+    },
+    {
+      "code": 6006,
       "name": "deadlinePassed",
       "msg": "Deadline has already passed"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "fundsAlreadyReleased",
       "msg": "Funds have already been released"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "invalidDeadline",
       "msg": "Invalid deadline specified"
     },
     {
-      "code": 6008,
+      "code": 6009,
       "name": "invalidReleaseTime",
       "msg": "Invalid auto-release time specified"
     },
     {
-      "code": 6009,
+      "code": 6010,
       "name": "overflow",
       "msg": "Arithmetic overflow"
     }
@@ -355,6 +492,10 @@ export type Escrow = {
           },
           {
             "name": "completedAt",
+            "type": "i64"
+          },
+          {
+            "name": "disputedAt",
             "type": "i64"
           },
           {

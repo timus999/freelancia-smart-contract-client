@@ -29,6 +29,10 @@ const escrowId = new BN(escrowIdNum.toString());
   const program = new Program<Escrow>(idl as Escrow, { connection, wallet });
   const escrowData = await program.account.escrow.fetch(escrowPda);
 
+
+  // Default spech Hash 
+  // ea65c3d81afa1d9ddf496accabefba4f760e9f507b1d99988e02d8f2bf651000
+
  return {
   publicKey: escrowPda,
   escrowId: escrowData.escrowId.toNumber(),
@@ -43,8 +47,11 @@ const escrowId = new BN(escrowIdNum.toString());
   deadline: escrowData.deadline.toNumber(),
   autoReleaseAt: escrowData.autoReleaseAt.toNumber(),
 
+  arbiter: escrowData.arbiter ? escrowData.arbiter.toBase58() : null,
+
   // Spec hash as lowercase hex string
   specHash: Buffer.from(escrowData.specHash).toString("hex"),
+  deliverableHash: Buffer.from(escrowData.deliverableHash).toString("hex"),
 };
 
 }

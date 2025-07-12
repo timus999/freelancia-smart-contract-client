@@ -1,107 +1,96 @@
-// import React, { useState } from 'react';
-// import { useAnchorWallet } from '@solana/wallet-adapter-react';
-// import { Connection } from '@solana/web3.js';
-// import { AnchorProvider, Program, web3 } from '@coral-xyz/anchor';  // ✅ New Anchor uses `AnchorProvider`
-// import idl from '../idl/escrow.json';
-
-// const EscrowCreate = () => {
-//   const wallet = useAnchorWallet();
-
-//   function getProvider() {
-//     if (!wallet) return null;
-
-//     const network = "http://127.0.0.1:8899";
-//     const connection = new Connection(network, "processed");
-
-//     const provider = new AnchorProvider(
-//       connection,
-//       wallet,
-//       { preflightCommitment: "processed" }
-//     );
-
-//     return provider;
-//   }
-
-//   const provider = getProvider(); // Optional: call it here for testing
-//   console.log("Provider", provider);
-
-//   async function createEscrow() {
-//     const provider = getProvider();
-
-//     const baseAccount = web3.Keypair.generate();
-
-//     if (!provider) {
-//       throw("Provider is null");
-
-//     }
-
-//     const a = JSON.stringify(idl);
-//     const b = JSON.parse(a);
-
-//     const program = new Program(b, idl.address, provider);
-//     try{
-
-//         await program.methods
-//       .createEscrow(/* args here if needed */)
-//       .accounts({
-//         escrow: baseAccount.publicKey,
-//         user: provider.wallet.publicKey,
-//         systemProgram: web3.SystemProgram.programId,
-//       })
-//       .signers([baseAccount])
-//       .rpc();
-//       const account = await program.account.escrow.fetch(baseAccount.publicKey);
-//       console.log("Account data:", account);
-//     } catch (err) {
-//       console.log("Transaction Error: ", err);
-//     }
-//   }
-
-//   return (
-//     <>
-//       <div className='flex items-center justify-center'>
-//       <button className='bg-amber-400 p-2' onClick={createEscrow}>Create escrow</button>
-
-//       </div>
-//     </>
-//   );
-// };
-
-// export default EscrowCreate;
-
-import {
-  useWallet,
-  useConnection,
-  useAnchorWallet,
-} from "@solana/wallet-adapter-react";
+import { useState } from "react";
+import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
 import { createEscrow } from "../utils/escrow.ts";
 
 export default function EscrowCreate() {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
+
+  const [escrowId, setEscrowId] = useState("");
+  const [amountSol, setAmountSol] = useState("");
+  const [spec, setSpec] = useState("Dummy data for escrow spec");
+
+  const now = Date.now() / 1000;
+  const defaultDeadline = now + 86400;
+  const defaultAutoRelease = now + 172800;
+
   const onClick = async () => {
     if (!wallet) return alert("Connect wallet first");
 
-    const pda = await createEscrow(
-      {
+    const parsedId = Number(escrowId);
+    const parsedAmount = parseFloat(amountSol);
+
+    if (!parsedId || isNaN(parsedAmount) || parsedAmount <= 0) {
+      return alert("Please enter valid escrow ID and amount");
+    }
+
+    try {
+      const pda = await createEscrow({
         connection,
         wallet,
-        escrowId: 12,
-        amountSol: 1.2,
-        takerPk: "", // empty → placeholder
-        deadline: Date.now() / 1e3 + 86400, // +24 h
-        autoReleaseAt: Date.now() / 1e3 + 172800, // +48 h
-        spec: "Initial offer — TBD",
-        arbiterPk: null,
-      } // taker for demo
-    );
+        escrowId: parsedId,
+        amountSol: parsedAmount,
+        takerPk: "",
+        deadline: defaultDeadline,
+        autoReleaseAt: defaultAutoRelease,
+        spec,
+        arbiterPk: wallet.publicKey.toBase58(),
+      });
 
-    alert(`Escrow created at ${pda.toBase58()}`);
+      alert(`✅ Escrow created at: ${pda.toBase58()}`);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to create escrow");
+    }
   };
 
   return (
-    <button onClick={onClick} className="bg-amber-400 p-2 rounded-lg">
-      Create Escrow
-    </button>
+    <div className="p-4 space-y-3 bg-white rounded shadow max-w-md">
+      <h2 className="text-lg font-bold">Create Escrow</h2>
+
+      <label className="block text-sm">
+        Escrow ID
+        <input
+          type="text"
+          value={escrowId}
+          onChange={(e) => setEscrowId(e.target.value)}
+          placeholder="e.g. 12"
+          className="w-full mt-1 px-3 py-1 border rounded"
+        />
+      </label>
+
+      <label className="block text-sm">
+        Amount (SOL)
+        <input
+          type="text"
+          value={amountSol}
+          onChange={(e) => setAmountSol(e.target.value)}
+          placeholder="e.g. 1.25"
+          step="any"
+          className="w-full mt-1 px-3 py-1 border rounded"
+        />
+      </label>
+
+      <label className="block text-sm">
+        Spec / Description
+        <textarea
+          value={spec}
+          onChange={(e) => setSpec(e.target.value)}
+          className="w-full mt-1 px-3 py-1 border rounded"
+        />
+      </label>
+
+      <p className="text-xs text-gray-500">
+        ⏱ Deadline: <b>{new Date(defaultDeadline * 1000).toLocaleString()}</b><br />
+        ⏱ Auto-release: <b>{new Date(defaultAutoRelease * 1000).toLocaleString()}</b>
+      </p>
+
+      <button
+        onClick={onClick}
+        className="w-full bg-amber-500 text-white py-2 rounded font-semibold hover:bg-amber-600"
+      >
+        Create Escrow
+      </button>
+    </div>
   );
 }

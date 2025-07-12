@@ -6,6 +6,7 @@ import EscrowApprover from "./components/EscrowApprove.tsx";
 
 
 
+
 function App() {
   return (
     <main className="min-h-screen m-auto">
@@ -25,6 +26,7 @@ function App() {
         <div>
           <EscrowApprover />
         </div>
+
     </div>
 
     </main>
