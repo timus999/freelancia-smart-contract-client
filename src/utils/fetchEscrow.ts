@@ -41,6 +41,7 @@ const escrowId = new BN(escrowIdNum.toString());
   maker: escrowData.maker.toBase58 ? escrowData.maker.toBase58() : new PublicKey(escrowData.maker).toBase58(),
   taker: escrowData.taker.toBase58 ? escrowData.taker.toBase58() : new PublicKey(escrowData.taker).toBase58(),
 
+  createdAt: escrowData.createdAt.toNumber(),
   status: escrowData.status,
   amountTotal: escrowData.amountTotal.toNumber() / LAMPORTS_PER_SOL,
   amountReleased: escrowData.amountReleased.toNumber() / LAMPORTS_PER_SOL,
@@ -52,6 +53,7 @@ const escrowId = new BN(escrowIdNum.toString());
   // Spec hash as lowercase hex string
   specHash: Buffer.from(escrowData.specHash).toString("hex"),
   deliverableHash: Buffer.from(escrowData.deliverableHash).toString("hex"),
+  completedAt: escrowData.completedAt.toNumber(),
 };
 
 }

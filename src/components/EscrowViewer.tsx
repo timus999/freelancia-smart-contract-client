@@ -6,6 +6,8 @@ import SubmitWorkForm from "./SubmitWork.tsx"; // ✅ import your form component
 import { PublicKey } from "@solana/web3.js";
 import RaiseDisputeForm from "./RaiseDispute.tsx";
 import DisputeResolver from "./DisputeResolver.tsx";
+import ClaimTimeoutForm from "./ClaimTimeout.tsx";
+import { formatUniversalTime } from "./EscrowCreate.tsx";
 
 const statusLabel = (s: number) =>
   ["Active", "Submitted", "Completed", "Disputed", "Cancelled"][s] ?? "Unknown";
@@ -19,6 +21,9 @@ const ts = (secs: number) =>
     minute: "2-digit",
   });
 
+
+const now = Math.floor(Date.now() / 1000);
+ 
 const DEFAULT_PUBKEY = PublicKey.default.toBase58();
 
 export default function EscrowViewer() {
@@ -36,7 +41,7 @@ export default function EscrowViewer() {
     const disputed: any[] = [];
 
     try {
-      for (let id = 0; id < 20; id++) {
+      for (let id = 0; id < 40; id++) {
         try {
           const e = await getEscrowData(connection, wallet, id);
           fetched.push(e);
@@ -50,6 +55,7 @@ export default function EscrowViewer() {
           ) {
             disputed.push(e);
           }
+          
         } catch {
           console.log(`Escrow ${id} not found or failed to fetch`);
         }
@@ -69,7 +75,6 @@ export default function EscrowViewer() {
   //   if (e.arbiter) console.log("Arbiter : ", e.arbiter);
   //   if ( wallet?.publicKey.toBase58() === e.arbiter) console.log(true);
 
-    
   // });
 
   useEffect(() => {
@@ -163,6 +168,10 @@ export default function EscrowViewer() {
                         <span>{e.amountReleased} SOL</span>
                       </div>
                       <div className="flex justify-between">
+                        <span>Created at</span>
+                        <span>{ts(e.createdAt)}</span>
+                      </div>
+                      <div className="flex justify-between">
                         <span>Deadline</span>
                         <span>{ts(e.deadline)}</span>
                       </div>
@@ -170,6 +179,12 @@ export default function EscrowViewer() {
                         <span>Auto-release</span>
                         <span>{ts(e.autoReleaseAt)}</span>
                       </div>
+                      { e.completedAt &&
+                      <div className="flex justify-between">
+                        <span>Completed at</span>
+                        <span>{ts(e.completedAt)}</span>
+                      </div>
+            }
                       <div className="flex justify-between">
                         <span>Spec Hash</span>
                         <span
@@ -206,6 +221,16 @@ export default function EscrowViewer() {
                         )
                       )}
 
+                      {["Active", "Submitted"].includes(
+                        statusLabel(e.status)
+                      ) && (
+                        <ClaimTimeoutForm
+                          escrowId={e.escrowId}
+                          maker={e.maker}
+                        />
+                      )}
+                    
+
                       {/* Conditionally render RequestRevisionForm if status is Submitted or Active */}
                       {statusLabel(e.status) === "Submitted" ||
                       statusLabel(e.status) === "Active" ? (
@@ -228,13 +253,9 @@ export default function EscrowViewer() {
         )}
       </div>
 
-      {disputedEscrows.map((e) =>
-          <DisputeResolver
-            key={e.escrowId}
-            escrow={e}
-          />
-        ) 
-      }
+      {disputedEscrows.map((e) => (
+        <DisputeResolver key={e.escrowId} escrow={e} />
+      ))}
     </>
   );
 }

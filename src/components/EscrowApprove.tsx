@@ -1,14 +1,12 @@
 // components/EscrowApprover.tsx
 import { useEffect, useState, useCallback } from "react";
-import {
-  useAnchorWallet,
-  useConnection,
-} from "@solana/wallet-adapter-react";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { getEscrowData } from "../utils/fetchEscrow.ts";
 import { getProgram } from "../utils/getProgram.ts";
 import RequestRevisionForm from "./RequestReview.tsx";
+import CancelBeforeStartButton from "./CancelEscrow.tsx";
 
 const statusLabel = (s: number) =>
   ["Active", "Submitted", "Completed", "Disputed", "Cancelled"][s] ?? "Unknown";
@@ -24,7 +22,7 @@ export default function EscrowApprover() {
     setLoading(true);
     const fetched: any[] = [];
     try {
-      for (let id = 0; id < 20; id++) {
+      for (let id = 0; id < 40; id++) {
         try {
           const e = await getEscrowData(connection, wallet, id);
           if (e.maker === wallet.publicKey?.toBase58()) {
@@ -48,15 +46,21 @@ export default function EscrowApprover() {
     if (!wallet) return alert("Wallet not connected");
     if (escrow.status !== 1) return alert("Escrow is not in 'Submitted' state");
 
-    if ( escrow.specHash !== escrow.deliverableHash ) {
-       alert("Deliverable does not match the spec hash \n Do you want to approve anyway?");
+    if (escrow.specHash !== escrow.deliverableHash) {
+      alert(
+        "Deliverable does not match the spec hash \n Do you want to approve anyway?"
+      );
     }
     try {
       const program = await getProgram(connection, wallet);
 
       const maker = wallet.publicKey;
       const taker = new PublicKey(escrow.taker);
-      const escrowIdBytes = new BN(escrow.escrowId).toArrayLike(Uint8Array, "le", 8);
+      const escrowIdBytes = new BN(escrow.escrowId).toArrayLike(
+        Uint8Array,
+        "le",
+        8
+      );
 
       const escrowPda = PublicKey.findProgramAddressSync(
         [Buffer.from("escrow"), maker.toBuffer(), escrowIdBytes],
@@ -79,15 +83,15 @@ export default function EscrowApprover() {
         })
         .instruction();
 
-        const tx = new web3.Transaction().add(ix);
-        tx.feePayer = maker;
-        tx.recentBlockhash = (
-          await connection.getLatestBlockhash("finalized")
-        ).blockhash;
-        
-        const signedTx = await wallet.signTransaction(tx);
-        const sig = await connection.sendRawTransaction(signedTx.serialize());
-        await connection.confirmTransaction(sig, "confirmed");
+      const tx = new web3.Transaction().add(ix);
+      tx.feePayer = maker;
+      tx.recentBlockhash = (
+        await connection.getLatestBlockhash("finalized")
+      ).blockhash;
+
+      const signedTx = await wallet.signTransaction(tx);
+      const sig = await connection.sendRawTransaction(signedTx.serialize());
+      await connection.confirmTransaction(sig, "confirmed");
 
       alert(`Approved! Tx: ${tx}`);
       fetchEscrows();
@@ -99,7 +103,9 @@ export default function EscrowApprover() {
 
   if (!wallet)
     return (
-      <div className="p-4 bg-white border rounded">Connect wallet to view your escrows</div>
+      <div className="p-4 bg-white border rounded">
+        Connect wallet to view your escrows
+      </div>
     );
 
   return (
@@ -127,9 +133,9 @@ export default function EscrowApprover() {
                   <span>#{e.escrowId}</span>
                 </div>
                 <div className="flex justify-between">
-  <span>Status</span>
-  <span
-    className={`font-semibold px-2 py-1 rounded text-xs
+                  <span>Status</span>
+                  <span
+                    className={`font-semibold px-2 py-1 rounded text-xs
       ${
         statusLabel(e.status) === "Active"
           ? "text-blue-700 bg-blue-100"
@@ -144,10 +150,10 @@ export default function EscrowApprover() {
           : ""
       }
     `}
-  >
-    {statusLabel(e.status)}
-  </span>
-</div>
+                  >
+                    {statusLabel(e.status)}
+                  </span>
+                </div>
                 <div className="flex justify-between">
                   <span>Total</span>
                   <span>{e.amountTotal} SOL</span>
@@ -162,42 +168,49 @@ export default function EscrowApprover() {
                     {e.taker.toBase58?.() ?? e.taker}
                   </span>
                 </div>
-                      <div className="flex justify-between">
-                      <span>Spec Hash</span>
-                      <span
-                        title={e.specHash}
-                        className="truncate max-w-[10rem] font-mono"
-                      >
-                        {e.specHash.slice(0, 10)}…
-                      </span>
-                    </div>
+                <div className="flex justify-between">
+                  <span>Spec Hash</span>
+                  <span
+                    title={e.specHash}
+                    className="truncate max-w-[10rem] font-mono"
+                  >
+                    {e.specHash.slice(0, 10)}…
+                  </span>
+                </div>
 
-                    { e.deliverableHash &&
-                            <div className="flex justify-between">
-                      <span>Deliverable</span>
-                      <span
-                        title={e.deliverableHash}
-                        className="truncate max-w-[10rem] font-mono"
-                      >
-                        {e.deliverableHash.slice(0, 10)}…
-                      </span>
-                    </div>
-          }
-
+                {e.deliverableHash && (
+                  <div className="flex justify-between">
+                    <span>Deliverable</span>
+                    <span
+                      title={e.deliverableHash}
+                      className="truncate max-w-[10rem] font-mono"
+                    >
+                      {e.deliverableHash.slice(0, 10)}…
+                    </span>
+                  </div>
+                )}
 
                 {e.status === 1 && (
                   <div>
-                  <button
-                    className="w-full py-1 mt-2 bg-green-500 text-white rounded"
-                    onClick={() => handleApprove(e)}
-                  >
-                    Approve Work
-                  </button>
-                  <RequestRevisionForm
+                    <button
+                      className="w-full py-1 mt-2 bg-green-500 text-white rounded"
+                      onClick={() => handleApprove(e)}
+                    >
+                      Approve Work
+                    </button>
+                    <RequestRevisionForm
+                      escrowId={e.escrowId}
+                      maker={e.maker}
+                    />
+                  </div>
+                )}
+
+                {e.status === 0 && e.amountReleased === 0 && (
+                  <CancelBeforeStartButton
                     escrowId={e.escrowId}
                     maker={e.maker}
+                    onSuccess={fetchEscrows}
                   />
-                </div>
                 )}
               </div>
             );
