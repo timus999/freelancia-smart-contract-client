@@ -7,16 +7,10 @@ import {
   Program,
   utils,
   web3,
-  type Idl,
 } from "@coral-xyz/anchor";
 import idl from "../idl/escrow.json";
 import type { Escrow } from "../idl/escrowTypes.ts";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
-import {
-  Connection,
-  Transaction,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
 // const sha256_1 = require("@noble/hashes/sha256");
 import { sha256 } from "@noble/hashes/sha256";
 
