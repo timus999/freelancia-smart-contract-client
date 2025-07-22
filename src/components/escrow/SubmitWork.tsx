@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import { hash } from "../utils/escrow.ts"; // Adjust the import path as needed
+import { hash } from "../../utils/escrow.ts"; // Adjust the import path as needed
 import { Program } from "@coral-xyz/anchor";
 import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
-import { Escrow } from "../idl/escrowTypes.ts"; // Adjust the import path as needed
-import idl from "../idl/escrow.json"; // Adjust the import path as needed
+import { Escrow } from "../../idl/escrowTypes.ts"; // Adjust the import path as needed
+import idl from "../../idl/escrow.json"; // Adjust the import path as needed
 
 
 

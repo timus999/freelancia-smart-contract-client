@@ -2,7 +2,7 @@ import { useState } from "react";
 import { web3, BN } from "@coral-xyz/anchor";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 
-import { getProgram } from "../utils/getProgram.ts";
+import { getProgram } from "../../utils/getProgram.ts";
 
 interface Props {
   escrowId: number;

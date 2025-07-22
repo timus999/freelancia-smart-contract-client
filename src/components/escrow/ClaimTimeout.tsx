@@ -2,7 +2,7 @@
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
-import { getProgram } from "../utils/getProgram.ts";
+import { getProgram } from "../../utils/getProgram.ts";
 
 export default function ClaimTimeoutForm({ escrowId, maker }: { escrowId: number; maker: string }) {
   const wallet = useAnchorWallet();

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { web3, BN } from "@coral-xyz/anchor";
-import idl from "../idl/escrow.json";
-import { getProgram } from "../utils/getProgram.ts";
+import idl from "../../idl/escrow.json";
+import { getProgram } from "../../utils/getProgram.ts";
 
 interface Props {
   escrowId: number;

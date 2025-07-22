@@ -3,8 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
-import { getEscrowData } from "../utils/fetchEscrow.ts";
-import { getProgram } from "../utils/getProgram.ts";
+import { getEscrowData } from "../../utils/fetchEscrow.ts";
+import { getProgram } from "../../utils/getProgram.ts";
 import RequestRevisionForm from "./RequestReview.tsx";
 import CancelBeforeStartButton from "./CancelEscrow.tsx";
 
