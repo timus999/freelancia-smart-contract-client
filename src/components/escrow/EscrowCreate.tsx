@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
-import { createEscrow } from "../utils/escrow.ts";
+import { createEscrow } from "../../utils/escrow.ts";
 
 
 

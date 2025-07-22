@@ -5,7 +5,7 @@ import {
   useConnection,
 } from "@solana/wallet-adapter-react";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
-import { getProgram } from "../utils/getProgram.ts";
+import { getProgram } from "../../utils/getProgram.ts";
 
 type Props = {
   escrowId: number;

@@ -10,9 +10,9 @@ const WalletConnector = () => {
       <WalletMultiButton />
 
       {/* Show address after connection */}
-      {connected && (
+      {/* {connected && (
         <p className="text-sm break-all">Connected: {publicKey?.toString()}</p>
-      )}
+      )} */}
     </div>
   );
 };

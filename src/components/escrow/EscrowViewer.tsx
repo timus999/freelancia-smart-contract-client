@@ -1,7 +1,7 @@
 // components/EscrowViewer.tsx
 import { useState, useEffect, useCallback } from "react";
 import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
-import { getEscrowData } from "../utils/fetchEscrow.ts";
+import { getEscrowData } from "../../utils/fetchEscrow.ts";
 import SubmitWorkForm from "./SubmitWork.tsx"; // ✅ import your form component
 import { PublicKey } from "@solana/web3.js";
 import RaiseDisputeForm from "./RaiseDispute.tsx";

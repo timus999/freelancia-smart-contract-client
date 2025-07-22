@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
-import { resolveDispute } from "../utils/resolveDispute.ts";
+import { resolveDispute } from "../../utils/resolveDispute.ts";
 import { PublicKey } from "@solana/web3.js";
 
 interface DisputeResolverProps {
