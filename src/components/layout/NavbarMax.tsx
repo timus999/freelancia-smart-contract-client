@@ -97,7 +97,7 @@ const NavbarMax = () => {
 
   useEffect(() => {
     setIsMenuOpen(false);
-  }, [location, hasUnread]);
+  }, [location]);
 
   const iconWithTooltip = (
     IconComponent: any,

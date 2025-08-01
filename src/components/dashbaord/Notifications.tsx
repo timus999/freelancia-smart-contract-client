@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card.tsx";
 import { cn } from "@/utils/cn.ts";
 import { Notification } from "@/hooks/useNotifications.tsx";
 import { useNavigate } from "react-router-dom";
+import { timeAgo } from "@/utils/timeformatter.ts";
 
 type Props = {
   notification: Notification;
@@ -22,7 +23,7 @@ export const NotificationCard = ({ notification, onMarkRead }: Props) => {
   }}
   className={cn(
     "mb-2 transition-all hover:shadow-md",
-    !notification.read && "border-l-4 border-black bg-gray-50"
+    !notification.read && "border-l-4 border-blue-400 bg-secondary"
   )}
 >
   <CardContent className="flex justify-between items-center p-4 min-h-[120px]">
@@ -33,7 +34,7 @@ export const NotificationCard = ({ notification, onMarkRead }: Props) => {
           {notification.message}
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          {new Date(notification.created_at).toLocaleString()}
+          Posted {timeAgo(notification.created_at)} ago
         </p>
       </div>
     </div>

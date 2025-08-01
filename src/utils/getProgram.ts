@@ -6,7 +6,7 @@ import { web3, Program } from "@coral-xyz/anchor";
 
  export function getProgram(
   connection: web3.Connection,
-  wallet: AnchorWallet
+  wallet: AnchorWallet,
 ): Promise<Program<Escrow>> {
   if (!wallet) {
     throw new Error("Wallet not connected");

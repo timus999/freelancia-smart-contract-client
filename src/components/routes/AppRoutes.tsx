@@ -18,6 +18,11 @@ import UserProfile from "@/pages/UserProfile.tsx";
 import Messages from "@/pages/Message.tsx";
 import WorkSpace from "@/pages/Workspace.tsx";
 import JobApplicantsPage from "@/pages/JobApplicants.tsx";
+import JobSubmission from "@/pages/JobSubmission.tsx";
+import ApproveWork from "@/pages/ApproveWork.tsx";
+import EscrowDetailPage from "@/pages/EscrowDetail.tsx";
+import NotFound from "@/pages/NotFound.tsx";
+import ArbiterResolvePage from "@/pages/ArbiterResolve.tsx";
 
 function AppRoutes() {
   return (
@@ -79,6 +84,36 @@ function AppRoutes() {
               <PrivateRoute>
               <BaseLayout>
                 <WorkSpace />
+              </BaseLayout>
+              </PrivateRoute>
+            }
+          />
+                      <Route
+            path="/my-workspace/:applicationId"
+            element={
+              <PrivateRoute>
+              <BaseLayout>
+                <JobSubmission />
+              </BaseLayout>
+              </PrivateRoute>
+            }
+          />
+                        <Route
+            path="/my-jobs/:job_id"
+            element={
+              <PrivateRoute>
+              <BaseLayout>
+                <ApproveWork />
+              </BaseLayout>
+              </PrivateRoute>
+            }
+          />
+                          <Route
+            path="/escrow/:escrow_pda"
+            element={
+              <PrivateRoute>
+              <BaseLayout>
+                <EscrowDetailPage />
               </BaseLayout>
               </PrivateRoute>
             }
@@ -163,6 +198,20 @@ function AppRoutes() {
               </PrivateRoute>
             }
           />
+               <Route
+            path="/resolve"
+            element={
+              <PrivateRoute>
+              <BaseLayout>
+                <ArbiterResolvePage />
+              </BaseLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route 
+            path="*"
+            element={<NotFound/>}
+            />
         </Routes>
       </Router>
       <ToastContainer />

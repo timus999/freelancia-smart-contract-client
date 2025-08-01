@@ -12,7 +12,7 @@ import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
 import { createEscrow } from "@/utils/escrow.ts";
 import { toast } from "react-toastify";
 
-type Job = {
+export type Job = {
   id: number;
   title: string;
   description: string;
@@ -55,8 +55,8 @@ const JobApplicantsPage = () => {
         const appRes = await getJobApplicants(parseInt(jobId));
         setJob(jobRes.jobs[0]);
         setApplicants(appRes);
-      } catch (err) {
-        console.error("Failed to load job or applicants", err);
+      } catch (err: any) {
+        console.error("Failed to load job or applicants", err.message);
       } finally {
         setLoading(false);
       }
@@ -71,6 +71,7 @@ const JobApplicantsPage = () => {
   };
 
   const handleConfirm = async () => {
+    console.log(wallet);
     if (!selectedApplicationId || !wallet || !job || !selectedApplicationWallet) return toast("Missing data or wallet");
 
     setShowModal(false);
@@ -90,7 +91,7 @@ const JobApplicantsPage = () => {
         arbiterPk: wallet.publicKey.toBase58(),
       });
       await approveFreelancer(selectedApplicationId);
-      await createEscrowNotification({ applicationId: selectedApplicationId, escrow_pda: pda.toBase58() });
+      await createEscrowNotification({ application_id: selectedApplicationId, escrow_pda: pda.toBase58() });
       setApplicants(prev => prev.map(a => a.application_id === selectedApplicationId ? { ...a, approved: true } : a));
       setSuccessModal(true);
     } catch (err) {
@@ -111,18 +112,18 @@ const JobApplicantsPage = () => {
 
   return (
     <motion.div className="max-w-4xl mx-auto p-6 space-y-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+
       <Card className="shadow-lg border">
         <CardHeader><CardTitle className="text-2xl">{job.title}</CardTitle></CardHeader>
         <CardContent>
           <p className="text-muted-foreground">{job.description}</p>
           <div className="mt-4 flex flex-wrap gap-2 text-sm">
-            <Badge variant="secondary">Budget: ${job.budget}</Badge>
+            <Badge variant="secondary">Budget: {job.budget} SOL</Badge>
             <Badge variant="secondary">Deadline: {new Date(job.deadline).toLocaleDateString()}</Badge>
             <Badge variant="secondary">Skills: {job.skills}</Badge>
           </div>
         </CardContent>
       </Card>
-
       <Separator />
 
       <div className="space-y-4">
@@ -156,7 +157,7 @@ const JobApplicantsPage = () => {
       {/* Confirm Modal */}
       {showModal && (
         <motion.div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <motion.div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+          <motion.div className="bg-secondary rounded-2xl shadow-xl p-6 w-[90%] max-w-md" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
             <h3 className="text-lg font-semibold mb-2">Confirm Approval</h3>
             <p className="text-sm text-muted-foreground mb-4">Escrow will be created and approval will be final. Proceed?</p>
             <div className="flex justify-end gap-2">
@@ -178,7 +179,7 @@ const JobApplicantsPage = () => {
       <AnimatePresence>
         {successModal && (
           <motion.div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center" initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}>
+            <motion.div className="bg-secondary rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center" initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}>
               <h3 className="text-lg font-semibold mb-4">Escrow Created & Freelancer Approved!</h3>
               <Button onClick={() => setSuccessModal(false)}>Okay</Button>
             </motion.div>

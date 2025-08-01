@@ -15,45 +15,36 @@ const LAMPORTS_PER_SOL = web3.LAMPORTS_PER_SOL;
 
 export async function getEscrowData(
   connection: web3.Connection,
-  wallet: AnchorWallet,
+  maker: PublicKey, // 👈 accept PublicKey instead of AnchorWallet
   escrowIdNum: number | bigint
 ) {
+  // Derive PDA using maker public key and escrowId
+  const escrowId = new BN(escrowIdNum.toString());
+  const [escrowPda] = deriveEscrowPda(maker, escrowId);
 
-    if (!wallet?.publicKey) throw new Error("Wallet not connected");
+  // Initialize program (read-only)
+  const program = new Program<Escrow>(idl as Escrow, { connection });
 
-     /* ---------- PDA ---------- */
-const escrowId = new BN(escrowIdNum.toString());
-  // 1. Find the PDA for the escrow account
-  const [escrowPda] = deriveEscrowPda(wallet.publicKey, escrowId);
-
-  const program = new Program<Escrow>(idl as Escrow, { connection, wallet });
   const escrowData = await program.account.escrow.fetch(escrowPda);
 
+  return {
+    publicKey: escrowPda,
+    escrowId: escrowData.escrowId.toNumber(),
 
-  // Default spech Hash 
-  // ea65c3d81afa1d9ddf496accabefba4f760e9f507b1d99988e02d8f2bf651000
+    maker: new PublicKey(escrowData.maker).toBase58(),
+    taker: new PublicKey(escrowData.taker).toBase58(),
 
- return {
-  publicKey: escrowPda,
-  escrowId: escrowData.escrowId.toNumber(),
+    createdAt: escrowData.createdAt.toNumber(),
+    status: escrowData.status,
+    amountTotal: escrowData.amountTotal.toNumber() / LAMPORTS_PER_SOL,
+    amountReleased: escrowData.amountReleased.toNumber() / LAMPORTS_PER_SOL,
+    deadline: escrowData.deadline.toNumber(),
+    autoReleaseAt: escrowData.autoReleaseAt.toNumber(),
 
-  // Convert PublicKey or Uint8Array to base58 string
-  maker: escrowData.maker.toBase58 ? escrowData.maker.toBase58() : new PublicKey(escrowData.maker).toBase58(),
-  taker: escrowData.taker.toBase58 ? escrowData.taker.toBase58() : new PublicKey(escrowData.taker).toBase58(),
+    arbiter: escrowData.arbiter ? escrowData.arbiter.toBase58() : null,
 
-  createdAt: escrowData.createdAt.toNumber(),
-  status: escrowData.status,
-  amountTotal: escrowData.amountTotal.toNumber() / LAMPORTS_PER_SOL,
-  amountReleased: escrowData.amountReleased.toNumber() / LAMPORTS_PER_SOL,
-  deadline: escrowData.deadline.toNumber(),
-  autoReleaseAt: escrowData.autoReleaseAt.toNumber(),
-
-  arbiter: escrowData.arbiter ? escrowData.arbiter.toBase58() : null,
-
-  // Spec hash as lowercase hex string
-  specHash: Buffer.from(escrowData.specHash).toString("hex"),
-  deliverableHash: Buffer.from(escrowData.deliverableHash).toString("hex"),
-  completedAt: escrowData.completedAt.toNumber(),
-};
-
+    specHash: Buffer.from(escrowData.specHash).toString("hex"),
+    deliverableHash: Buffer.from(escrowData.deliverableHash).toString("hex"),
+    completedAt: escrowData.completedAt.toNumber(),
+  };
 }
