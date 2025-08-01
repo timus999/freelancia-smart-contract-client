@@ -43,7 +43,7 @@ export default function EscrowViewer() {
     try {
       for (let id = 0; id < 40; id++) {
         try {
-          const e = await getEscrowData(connection, wallet, id);
+          const e = await getEscrowData(connection, wallet.publicKey, id);
           fetched.push(e);
 
           // Dispute logic

@@ -105,6 +105,9 @@ function AnimatedCard({ job, index }: { job: JobResopnse; index: number }) {
           <p>
             <strong>Status:</strong> {job.status}
           </p>
+          <p>
+            <strong title={job.job_ipfs_hash} className="truncate max-w-[10rem]">Job IPFS hash:</strong> {job.job_ipfs_hash.slice(0, 20)}...
+          </p>
         </div>
       </Card>
     </motion.div>

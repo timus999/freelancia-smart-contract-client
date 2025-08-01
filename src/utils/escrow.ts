@@ -13,6 +13,7 @@ import type { Escrow } from "../idl/escrowTypes.ts";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 // const sha256_1 = require("@noble/hashes/sha256");
 import { sha256 } from "@noble/hashes/sha256";
+import { PublicKey } from "@solana/web3.js";
 
 export const PROGRAM_ID = new web3.PublicKey(idl.address);
 
@@ -30,11 +31,11 @@ export const deriveEscrowPda = (
     PROGRAM_ID
   );
 
-export function hash(data: Uint8Array | string): Uint8Array {
+export async function hash(data: Uint8Array | string): Promise<Uint8Array> {
   const bytes =
     typeof data === "string" ? new TextEncoder().encode(data) : data;
 
-  return sha256(bytes);
+  return await sha256(bytes);
 }
 
 interface CreateEscrowParams {
@@ -91,8 +92,8 @@ export async function createEscrow({
     //     : web3.PublicKey.default; // all‑zero placeholder
     
     // console.log("Taker public key:", taker.toBase58());
-    const taker = wallet?.publicKey;
-if (!taker) throw new Error("Wallet not connected");
+//     const taker = wallet?.publicKey;
+// if (!taker) throw new Error("Wallet not connected");
     const arbiter =
       arbiterPk && arbiterPk.trim().length > 0
         ? new web3.PublicKey(arbiterPk)
@@ -114,7 +115,9 @@ if (!taker) throw new Error("Wallet not connected");
     const deadlineBn = new BN(deadline);
     const autoReleaseBn = new BN(autoReleaseAt);
 
-    const specHash = hash(spec);
+    const taker = new PublicKey(takerPk);
+
+    const specHash =await hash(spec);
     if (specHash.length !== 32)
       throw new Error("specHash must be exactly 32 bytes");
 
@@ -152,7 +155,7 @@ if (!taker) throw new Error("Wallet not connected");
 
     console.log("✅ escrow created:", sig);
     return escrowPda;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to create escrow:", error);
     throw new Error(`Escrow creation failed: ${error.message}`);
   }

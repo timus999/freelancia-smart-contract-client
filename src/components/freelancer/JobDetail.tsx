@@ -5,6 +5,7 @@ import { getJobUserStatus } from "@/api/freelancer.ts";
 import { SidebarProfile } from "../dashbaord/SidebarProfile.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "../ui/button.tsx";
+import { timeAgo } from "@/utils/timeformatter.ts";
 import {
   Card,
   CardContent,
@@ -14,12 +15,14 @@ import {
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 
+
 export const JobDetail = () => {
   const { id } = useParams();
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [applied, setApplied] = useState(false);
   const [saved, setSaved] = useState(false);
+
 
   const handleJobApply = async (jobId: number) => {
     try {
@@ -78,7 +81,7 @@ export const JobDetail = () => {
         <Card>
           <CardHeader>
             <div className="text-sm text-muted-foreground">
-              Posted {job.posted_at}
+              Posted {timeAgo(job.posted_at)}
             </div>
             <CardTitle className="text-2xl font-bold mt-1">
               {job.title}
@@ -90,7 +93,7 @@ export const JobDetail = () => {
 
             <div className="flex flex-wrap gap-2">
               {job.skills.split(",").map((skill: string) => (
-                <Badge key={skill} variant="secondary">
+                <Badge key={skill} variant="outline" className="pb-1">
                   {skill}
                 </Badge>
               ))}
@@ -116,6 +119,10 @@ export const JobDetail = () => {
               <div>
                 <span className="font-medium text-foreground">Status:</span>{" "}
                 {job.status}
+              </div>
+               <div>
+                <span className="font-medium text-foreground truncate cursor-pointer">Job ipfs hash:</span>{" "}
+                {job.job_ipfs_hash.slice(0, 10)}...
               </div>
             </div>
 

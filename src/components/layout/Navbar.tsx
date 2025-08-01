@@ -56,12 +56,12 @@ const navigate = useNavigate();
           <div className="hidden md:flex items-center space-x-4">
            
                 <Link to="/login">
-                  <Button variant="ghost" className="text-text-secondary hover:text-text-primary">
+                  <Button variant="ghost" className="text-text-secondary hover:text-primary">
                     Login
                   </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button className="bg-primary hover:bg-primary/90 text-white">
+                  <Button className="bg-primary hover:bg-primary/90 text-secondary">
                     Sign Up
                   </Button>
                 </Link>
@@ -100,12 +100,12 @@ const navigate = useNavigate();
            
                 <div className="flex flex-col space-y-2 pt-4">
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full text-text-secondary hover:text-text-primary">
+                    <Button variant="default" className="w-full bg-primary-foreground text-secondary hover:text-text-primary">
                       Login
                     </Button>
                   </Link>
                   <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                    <Button className="w-full bg-muted-foreground hover:bg-primary/90 text-secondary">
                       Sign Up
                     </Button>
                   </Link>

@@ -24,7 +24,7 @@ export default function EscrowApprover() {
     try {
       for (let id = 0; id < 40; id++) {
         try {
-          const e = await getEscrowData(connection, wallet, id);
+          const e = await getEscrowData(connection, wallet.publicKey, id);
           if (e.maker === wallet.publicKey?.toBase58()) {
             fetched.push(e);
           }
@@ -46,11 +46,6 @@ export default function EscrowApprover() {
     if (!wallet) return alert("Wallet not connected");
     if (escrow.status !== 1) return alert("Escrow is not in 'Submitted' state");
 
-    if (escrow.specHash !== escrow.deliverableHash) {
-      alert(
-        "Deliverable does not match the spec hash \n Do you want to approve anyway?"
-      );
-    }
     try {
       const program = await getProgram(connection, wallet);
 

@@ -105,7 +105,7 @@ export const approveFreelancer = async (applicationId: number) => {
 }
 
 interface EscrowNotification {
-  applicationId: number,
+  application_id: number,
   escrow_pda: string,
 }
 
@@ -117,6 +117,7 @@ export const createEscrowNotification = async (data: EscrowNotification) => {
 export interface MyJobsResponse {
     job_id: number,
     title: string,
+    status: string,
     description: string,
     skills: string,
     budget: number,
@@ -127,11 +128,38 @@ export interface MyJobsResponse {
     applied_at: string,
     approved?: boolean,
     is_saved: number,
+    application_id: number,
 }
 
 export const getMyJobs = async (): Promise<MyJobsResponse[]> => {
     const res = await client.get("/api/my-jobs");
     return res.data;
+}
+
+export const getUserApprovedJobs = async (job_id: number) => { 
+  const res = await client.get(`/api/my-jobs/${job_id}`);
+  return res.data;
+}
+
+export const reviewRequestClient = async (application_id: number) => { 
+  const res = await client.post(`/api/review-request/${application_id}`);
+  return res.data;
+}
+
+interface ApprovePayload {
+  application_id: number,
+}
+export const approveWorkClient = async (data: ApprovePayload) => { 
+  const res = await client.post(`/api/approve-work`, data);
+  return res.data;
+}
+
+interface CancelEscrowPayload {
+  job_id: number,
+}
+export const cancelEscrowClient = async (data: CancelEscrowPayload) => { 
+  const res = await client.post(`/api/cancel-escrow`, data);
+  return res.data;
 }
 // export const getNotifications = async () => {
 //   const res = await client.get("/api/notifications");

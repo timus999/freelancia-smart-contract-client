@@ -31,6 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover.tsx"
+import { uploadJsonToPinata } from "@/lib/uploadJsonToPinata.ts";
 
 const countries = [
   "United States", "Canada", "United Kingdom", "Germany",
@@ -62,14 +63,32 @@ export default function PostJob() {
 
   const onSubmit = async (data: any) => {
     try {
+
+      const jobJson = {
+      title: data.title,
+      description: data.description,
+      skills: data.skills.split(",").map((s: string) => s.trim()),
+      budget: parseInt(data.budget),
+      location: data.location,
+      job_type: data.job_type,
+      deadline: date?.toISOString(),
+      category: data.category,
+    };
+
+
+    const ipfsHash = await uploadJsonToPinata(jobJson);
+
+
       const finalData = {
         ...data,
         budget: parseInt(data.budget),
         deadline: date,
+        job_ipfs_hash: ipfsHash,
       };
       await createJob(finalData);
       toast.success("Job posted successfully");
       reset();
+      setDate(undefined); 
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -144,11 +163,12 @@ export default function PostJob() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="job_ipfs_hash">IPFS Hash</Label>
-                <Input {...register("job_ipfs_hash", { required: "IPFS hash is required" })} />
-                {errors.job_ipfs_hash && <p className="text-red-500 text-sm">{errors.job_ipfs_hash.message}</p>}
+                 <div className="grid gap-2">
+                <Label htmlFor="category">Category</Label>
+                <Input {...register("category", { required: "Category is required" })} />
+                {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
               </div>
+              
               <div className="grid gap-2">
                 <Label htmlFor="deadline">Deadline</Label>
   <Popover>
@@ -166,19 +186,6 @@ export default function PostJob() {
         <Calendar mode="single" selected={date} onSelect={setDate} />
       </PopoverContent>
     </Popover>                {errors.deadline && <p className="text-red-500 text-sm">{errors.deadline.message}</p>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="category">Category</Label>
-                <Input {...register("category", { required: "Category is required" })} />
-                {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="status">Status</Label>
-                <Input {...register("status")} disabled value="open" />
               </div>
             </div>
 
